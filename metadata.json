@@ -1,0 +1,5 @@
+{
+  "name": "Industrial SQL Dashboard",
+  "description": "A modular and easy-to-use industrial dashboard that runs with SQL. This application provides a live demo with mock data, showcasing various widgets like KPIs, charts, heatmaps, and data tables for monitoring factory operations.",
+  "requestFramePermissions": []
+}
