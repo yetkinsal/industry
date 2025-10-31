@@ -113,11 +113,90 @@ industrial-sql-dashboard/
 
 ## Deployment
 
-**Backend** (Vercel/Railway/Render):
-- Set `DATABASE_URL`, `ENCRYPTION_KEY`, `CORS_ORIGIN`
+### Backend (Railway - Already Deployed)
 
-**Frontend** (Vercel/Netlify):
-- Set `VITE_API_BASE_URL`
+The backend is deployed at: https://industry-production-dd27.up.railway.app
+
+**Environment Variables on Railway:**
+- `DATABASE_URL` - PostgreSQL connection string from Supabase
+- `ENCRYPTION_KEY` - 64-character hex key for credential encryption
+- `NODE_ENV` - Set to `production`
+- `PORT` - Automatically set by Railway
+
+### Frontend Deployment
+
+#### Option 1: Vercel (Recommended)
+
+1. **Push your code to GitHub** (already done ✓)
+
+2. **Deploy to Vercel:**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "New Project"
+   - Import `yetkinsal/industry` repository
+   - Vercel will auto-detect the Vite configuration
+   - Click "Deploy"
+
+3. **Environment Variable (Optional):**
+   - The `vercel.json` already configures `VITE_API_BASE_URL`
+   - Or set it manually in Vercel dashboard:
+     ```
+     VITE_API_BASE_URL = https://industry-production-dd27.up.railway.app
+     ```
+
+4. **Deploy:**
+   - Vercel will automatically build and deploy
+   - Your app will be live at `https://your-project.vercel.app`
+
+#### Option 2: Netlify
+
+1. **Push your code to GitHub** (already done ✓)
+
+2. **Deploy to Netlify:**
+   - Go to [netlify.com](https://netlify.com)
+   - Click "Add new site" → "Import an existing project"
+   - Connect to GitHub and select `yetkinsal/industry`
+   - Netlify will auto-detect the `netlify.toml` configuration
+   - Click "Deploy site"
+
+3. **Environment Variable (Optional):**
+   - The `netlify.toml` already configures `VITE_API_BASE_URL`
+   - Or set it manually in Netlify dashboard:
+     ```
+     VITE_API_BASE_URL = https://industry-production-dd27.up.railway.app
+     ```
+
+4. **Deploy:**
+   - Netlify will automatically build and deploy
+   - Your app will be live at `https://your-site.netlify.app`
+
+#### Quick Deploy Commands
+
+**Build locally:**
+```bash
+npm install
+npm run build
+```
+
+**Preview production build:**
+```bash
+npm run preview
+```
+
+### Post-Deployment
+
+After deploying the frontend, update the CORS configuration in `backend/src/index.ts` to include your frontend URL:
+
+```typescript
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://industry-production-dd27.up.railway.app',
+  'https://your-frontend.vercel.app',  // Add your Vercel URL
+  // or 'https://your-site.netlify.app',  // Add your Netlify URL
+];
+```
+
+Then redeploy the backend on Railway for the changes to take effect.
 
 ## GitHub
 https://github.com/yetkinsal/industry
