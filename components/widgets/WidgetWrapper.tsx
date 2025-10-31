@@ -1,5 +1,4 @@
-import React, 'react';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { ICONS } from '../../constants';
 import WidgetError from './WidgetError';
 

@@ -87,8 +87,54 @@ const BuilderPage = () => {
     setSaveStatus('saving');
 
     try {
-      // Save layout
-      const layout = updatedWidgets.map(w => ({
+      const widgetsWithIds: BuilderWidget[] = [];
+
+      // Create or update widgets
+      for (const widget of updatedWidgets) {
+        if (widget.i.startsWith('new-')) {
+          // New widget - create via API
+          if (!widget.connectionId) {
+            console.warn('Skipping widget creation - no connection selected:', widget.title);
+            widgetsWithIds.push(widget);
+            continue;
+          }
+
+          const createdWidget = await apiService.createWidget(id, {
+            type: widget.type,
+            title: widget.title,
+            description: widget.description,
+            connectionId: widget.connectionId,
+            query: widget.query,
+            params: widget.params,
+            refreshInterval: widget.refreshCron ? parseInt(widget.refreshCron) : undefined,
+            vizOptions: widget.viz,
+            layout: { x: widget.x, y: widget.y, w: widget.w, h: widget.h }
+          });
+
+          // Replace temporary ID with real ID
+          widgetsWithIds.push({
+            ...widget,
+            i: createdWidget.id,
+            id: createdWidget.id
+          });
+        } else {
+          // Existing widget - update
+          await apiService.updateWidget(widget.i, {
+            title: widget.title,
+            description: widget.description,
+            query: widget.query,
+            params: widget.params,
+            vizOptions: widget.viz,
+          });
+          widgetsWithIds.push(widget);
+        }
+      }
+
+      // Update widget state with new IDs
+      setWidgets(widgetsWithIds);
+
+      // Save layout with real IDs
+      const layout = widgetsWithIds.map(w => ({
         i: w.i,
         x: w.x,
         y: w.y,
@@ -97,20 +143,6 @@ const BuilderPage = () => {
       }));
 
       await apiService.updateDashboardLayout(id, layout);
-
-      // Update widgets
-      for (const widget of updatedWidgets) {
-        if (!widget.i.startsWith('new-')) {
-          // Existing widget - update
-          await apiService.updateWidget(widget.i, {
-            title: widget.title,
-            description: widget.description,
-            query: widget.query,
-            params: widget.params,
-            vizOptions: widget.vizOptions,
-          });
-        }
-      }
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -179,10 +211,20 @@ const BuilderPage = () => {
     setSelectedWidgetI(i);
   };
   
-  const handleDeleteWidget = (i: string) => {
+  const handleDeleteWidget = async (i: string) => {
     if (selectedWidgetI === i) {
       setSelectedWidgetI(null);
     }
+
+    // Delete from backend if it's not a new widget
+    if (!i.startsWith('new-')) {
+      try {
+        await apiService.deleteWidget(i);
+      } catch (error) {
+        console.error('Failed to delete widget:', error);
+      }
+    }
+
     setWidgets(widgets.filter(w => w.i !== i));
   }
 
@@ -193,6 +235,20 @@ const BuilderPage = () => {
   };
 
   const selectedWidget = selectedWidgetI ? widgets.find(w => w.i === selectedWidgetI) : null;
+
+  if (loading) {
+    return (
+      <div className="flex h-screen bg-background text-text-primary flex-col">
+        <Topbar title="Dashboard Builder" onMenuClick={() => {}} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-text-secondary">Loading dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background text-text-primary flex-col">

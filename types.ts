@@ -46,6 +46,7 @@ export interface BuilderWidget {
   type: WidgetType;
   title: string;
   description?: string;
+  connectionId?: string; // Database connection to use for queries
   query: string;
   params: Record<string, any>;
   refreshCron?: string;

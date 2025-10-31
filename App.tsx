@@ -7,6 +7,7 @@ import BuilderPage from './pages/BuilderPage';
 import NewFactoryPage from './pages/NewFactoryPage';
 import ConnectionsPage from './pages/ConnectionsPage';
 import DashboardPage from './pages/DashboardPage';
+import DashboardsListPage from './pages/DashboardsListPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/demo" element={<DemoDashboardPage />} />
+        <Route path="/dashboards" element={<DashboardsListPage />} />
         <Route path="/dashboards/:id" element={<DashboardPage />} />
         <Route path="/builder/:id" element={<BuilderPage />} />
         <Route path="/factory/new" element={<NewFactoryPage />} />
