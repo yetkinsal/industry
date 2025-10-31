@@ -15,11 +15,27 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
+// CORS configuration - support multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://industry-production-dd27.up.railway.app',
+  process.env.CORS_ORIGIN, // Additional origin from env if specified
+].filter(Boolean); // Remove undefined/null values
 
 // Middleware
 app.use(cors({
-  origin: CORS_ORIGIN,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -87,7 +103,7 @@ async function startServer() {
 
 🚀 Server running on http://localhost:${PORT}
 📊 Environment: ${process.env.NODE_ENV || 'development'}
-🔗 CORS enabled for: ${CORS_ORIGIN}
+🔗 CORS enabled for: ${allowedOrigins.join(', ')}
 
 API Endpoints:
   GET    /health
