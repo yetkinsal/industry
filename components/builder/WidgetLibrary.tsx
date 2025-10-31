@@ -6,7 +6,7 @@ interface WidgetLibraryProps {
   onAddWidget: (type: WidgetType) => void;
 }
 
-const WIDGET_TYPES: WidgetType[] = ['KPI', 'LINE', 'BAR', 'TABLE', 'HEATMAP'];
+const WIDGET_TYPES: WidgetType[] = ['KPI', 'GAUGE', 'LINE', 'BAR', 'AREA', 'HORIZONTAL_BAR', 'TABLE', 'HEATMAP'];
 
 const WidgetLibrary: React.FC<WidgetLibraryProps> = ({ onAddWidget }) => {
   return (

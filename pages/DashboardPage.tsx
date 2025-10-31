@@ -65,48 +65,79 @@ const DashboardPage = () => {
     loadDashboard();
   }, [id]);
 
+  // Execute a single widget query
+  const executeWidget = async (widget: Widget) => {
+    try {
+      setWidgetData(prev => {
+        const next = new Map(prev);
+        const current = prev.get(widget.id);
+        if (current) {
+          next.set(widget.id, { ...current, loading: true, error: null });
+        }
+        return next;
+      });
+
+      const result = await apiService.executeWidget(widget.id, filters);
+
+      setWidgetData(prev => {
+        const next = new Map(prev);
+        next.set(widget.id, {
+          widgetId: widget.id,
+          data: result.rows,
+          loading: false,
+          error: null,
+        });
+        return next;
+      });
+    } catch (err: any) {
+      setWidgetData(prev => {
+        const next = new Map(prev);
+        next.set(widget.id, {
+          widgetId: widget.id,
+          data: [],
+          loading: false,
+          error: err.message || 'Query execution failed',
+        });
+        return next;
+      });
+    }
+  };
+
   // Execute widget queries when filters change
   useEffect(() => {
     if (widgets.length === 0) return;
 
     const executeWidgets = async () => {
       for (const widget of widgets) {
-        try {
-          setWidgetData(prev => {
-            const next = new Map(prev);
-            next.set(widget.id, { ...prev.get(widget.id)!, loading: true, error: null });
-            return next;
-          });
-
-          const result = await apiService.executeWidget(widget.id, filters);
-
-          setWidgetData(prev => {
-            const next = new Map(prev);
-            next.set(widget.id, {
-              widgetId: widget.id,
-              data: result.rows,
-              loading: false,
-              error: null,
-            });
-            return next;
-          });
-        } catch (err: any) {
-          setWidgetData(prev => {
-            const next = new Map(prev);
-            next.set(widget.id, {
-              widgetId: widget.id,
-              data: [],
-              loading: false,
-              error: err.message || 'Query execution failed',
-            });
-            return next;
-          });
-        }
+        await executeWidget(widget);
       }
     };
 
     executeWidgets();
   }, [widgets, filters]);
+
+  // Auto-refresh widgets based on their refreshInterval
+  useEffect(() => {
+    if (widgets.length === 0) return;
+
+    const intervals: NodeJS.Timeout[] = [];
+
+    widgets.forEach(widget => {
+      // Only set up auto-refresh if widget has a refreshInterval defined
+      if (widget.refreshInterval && widget.refreshInterval > 0) {
+        const intervalMs = widget.refreshInterval * 1000; // Convert seconds to milliseconds
+        const intervalId = setInterval(() => {
+          executeWidget(widget);
+        }, intervalMs);
+        intervals.push(intervalId);
+      }
+    });
+
+    // Cleanup intervals on unmount or when widgets change
+    return () => {
+      intervals.forEach(id => clearInterval(id));
+    };
+  }, [widgets, filters]); // Re-setup intervals when widgets or filters change
 
   const renderWidget = (widget: Widget) => {
     const data = widgetData.get(widget.id);

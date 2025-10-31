@@ -1,4 +1,4 @@
-export type WidgetType = 'KPI' | 'LINE' | 'BAR' | 'HEATMAP' | 'TABLE';
+export type WidgetType = 'KPI' | 'LINE' | 'BAR' | 'GAUGE' | 'TABLE' | 'HEATMAP' | 'AREA' | 'HORIZONTAL_BAR';
 
 export interface Widget {
   id: string;

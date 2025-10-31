@@ -29,6 +29,9 @@ const BuilderPage = () => {
   const [isLayoutLocked, setIsLayoutLocked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [dashboardName, setDashboardName] = useState('My Dashboard');
+  const [dashboardDescription, setDashboardDescription] = useState('');
+  const [isEditingName, setIsEditingName] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Load dashboard and widgets from API
@@ -39,6 +42,11 @@ const BuilderPage = () => {
       setLoading(true);
       try {
         const dashboard = await apiService.getDashboardById(id);
+
+        // Load dashboard metadata
+        setDashboardName(dashboard.name || 'My Dashboard');
+        setDashboardDescription(dashboard.description || '');
+
         const loadedWidgets: BuilderWidget[] = (dashboard.widgets || []).map(w => ({
           i: w.id,
           type: w.type as WidgetType,
@@ -234,6 +242,24 @@ const BuilderPage = () => {
     }
   };
 
+  const handleSaveDashboardMetadata = async () => {
+    if (!id) return;
+
+    try {
+      await apiService.updateDashboard(id, {
+        name: dashboardName,
+        description: dashboardDescription,
+      });
+      setIsEditingName(false);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch (error) {
+      console.error('Failed to save dashboard metadata:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  };
+
   const selectedWidget = selectedWidgetI ? widgets.find(w => w.i === selectedWidgetI) : null;
 
   if (loading) {
@@ -252,7 +278,63 @@ const BuilderPage = () => {
 
   return (
     <div className="flex h-screen bg-background text-text-primary flex-col">
-      <Topbar title={`Dashboard Builder: My Production Line`} onMenuClick={() => {}} />
+      {/* Custom Header with Editable Dashboard Name */}
+      <header className="bg-surface border-b border-border p-4 flex items-center justify-between z-10">
+        <div className="flex-1">
+          {isEditingName ? (
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={dashboardName}
+                onChange={(e) => setDashboardName(e.target.value)}
+                className="text-xl font-bold text-text-primary bg-background border border-border rounded px-2 py-1 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Dashboard Name"
+              />
+              <input
+                type="text"
+                value={dashboardDescription}
+                onChange={(e) => setDashboardDescription(e.target.value)}
+                className="text-sm text-text-secondary bg-background border border-border rounded px-2 py-1 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Dashboard Description (optional)"
+              />
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleSaveDashboardMetadata}
+                  className="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-blue-500"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditingName(false)}
+                  className="px-3 py-1 text-sm bg-surface border border-border text-text-primary rounded hover:bg-border"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <div>
+                <h1 className="text-xl font-bold text-text-primary">{dashboardName}</h1>
+                {dashboardDescription && (
+                  <p className="text-sm text-text-secondary">{dashboardDescription}</p>
+                )}
+              </div>
+              <button
+                onClick={() => setIsEditingName(true)}
+                className="text-text-secondary hover:text-primary p-1"
+                title="Edit dashboard name and description"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                  <path d="m15 5 4 4"/>
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
       <div className="flex flex-1 overflow-hidden">
         
         <aside className="w-56 bg-surface p-4 border-r border-border flex-shrink-0">
