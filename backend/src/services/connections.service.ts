@@ -164,7 +164,7 @@ export class ConnectionsService {
       'DELETE FROM connections WHERE id = $1',
       [id]
     );
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   /**

@@ -153,7 +153,7 @@ export class WidgetsService {
       'DELETE FROM widgets WHERE id = $1',
       [id]
     );
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   /**
@@ -212,7 +212,7 @@ export class WidgetsService {
       return {
         rows,
         fields,
-        rowCount: result.rowCount,
+        rowCount: result.rowCount ?? 0,
       };
     } catch (error: any) {
       throw new Error(`Query execution failed: ${error.message}`);
@@ -290,7 +290,7 @@ export class WidgetsService {
       return {
         rows,
         fields,
-        rowCount: result.rowCount,
+        rowCount: result.rowCount ?? 0,
       };
     } catch (error: any) {
       throw new Error(`Query test failed: ${error.message}`);
