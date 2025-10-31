@@ -13,12 +13,6 @@ import apiService from '@/services/apiService';
 
 const ReactGridLayout = WidthProvider(RGL);
 
-const initialWidgets: BuilderWidget[] = [
-    { i: 'a', type: 'KPI', title: 'OEE', x: 0, y: 0, w: 2, h: 2, minW: 2, minH: 2, dashboardId: '1', query: 'SELECT oee FROM stats;', params: {} },
-    { i: 'b', type: 'LINE', title: 'OEE By Hour', x: 2, y: 0, w: 4, h: 4, minW: 3, minH: 4, dashboardId: '1', query: 'SELECT oee, hour FROM hourly_stats;', params: {} },
-    { i: 'c', type: 'TABLE', title: 'Last 50 Events', x: 0, y: 2, w: 6, h: 5, minW: 4, minH: 3, dashboardId: '1', query: 'SELECT * FROM events LIMIT 50;', params: {} },
-];
-
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 const BuilderPage = () => {
@@ -237,8 +231,17 @@ const BuilderPage = () => {
   }
 
   const handleResetLayout = () => {
-    if (window.confirm("Are you sure you want to reset the layout? All position and size changes will be lost.")) {
-      setWidgets(initialWidgets);
+    if (window.confirm("Are you sure you want to reset the layout? This will rearrange all widgets to a default grid layout.")) {
+      // Reset layout by repositioning widgets in a grid
+      const updatedWidgets = widgets.map((widget, index) => ({
+        ...widget,
+        x: (index * 4) % 12,
+        y: Math.floor((index * 4) / 12) * 4,
+        w: 4,
+        h: 4,
+      }));
+      setWidgets(updatedWidgets);
+      triggerAutoSave(updatedWidgets);
     }
   };
 

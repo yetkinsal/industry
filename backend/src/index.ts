@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { testAppDbConnection, closeAllConnections } from './config/database';
 
 // Import routes
+import authRoutes from './routes/auth.routes';
 import factoriesRoutes from './routes/factories.routes';
 import connectionsRoutes from './routes/connections.routes';
 import dashboardsRoutes from './routes/dashboards.routes';
@@ -57,6 +58,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // API routes
+app.use('/api/auth', authRoutes); // Auth routes (public + protected)
 app.use('/api/factories', factoriesRoutes);
 app.use('/api/connections', connectionsRoutes);
 app.use('/api/dashboards', dashboardsRoutes);

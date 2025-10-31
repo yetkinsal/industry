@@ -68,7 +68,7 @@ class ApiService {
   }
 
   /**
-   * Generic fetch wrapper with error handling
+   * Generic fetch wrapper with error handling and auth token injection
    */
   private async fetch<T>(
     endpoint: string,
@@ -76,11 +76,15 @@ class ApiService {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
+    // Get auth token from localStorage
+    const token = localStorage.getItem('auth_token');
+
     try {
       const response = await fetch(url, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
           ...options?.headers,
         },
       });
