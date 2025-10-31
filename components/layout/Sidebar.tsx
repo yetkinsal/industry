@@ -47,23 +47,29 @@ const FilterInput: React.FC<{ label: string; id: string; checked: boolean; onCha
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const { filters, setFilters } = useFilters();
 
-  const handleCheckboxChange = (group: 'lines' | 'shifts') => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (group: 'lines' | 'shifts' | 'products') => (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = e.target;
     setFilters(prev => {
       const currentValues = prev[group];
       const newValues = checked
         ? [...currentValues, id]
         : currentValues.filter(value => value !== id);
+
+      // For products, also update legacy productName field with first selected product
+      if (group === 'products') {
+        return {
+          ...prev,
+          [group]: newValues,
+          productName: newValues[0] || 'cement' // Backward compatibility
+        };
+      }
+
       return { ...prev, [group]: newValues };
     });
   };
 
   const handleSkuChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters(prev => ({ ...prev, sku: e.target.value }));
-  };
-
-  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters(prev => ({ ...prev, productName: e.target.value }));
   };
 
   return (
@@ -121,16 +127,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </div>
 
         <div className="flex-grow space-y-6 overflow-y-auto">
-             <FilterSection title="Product Name">
-                <select 
-                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                    value={filters.productName}
-                    onChange={handleProductChange}
-                  >
-                    <option value="cement">Cement</option>
-                    <option value="concrete">Concrete</option>
-                    <option value="aggregate">Aggregate</option>
-                  </select>
+             <FilterSection title="Products (Compare)">
+                <FilterInput id="cement" label="Cement" checked={filters.products.includes('cement')} onChange={handleCheckboxChange('products')} />
+                <FilterInput id="iron" label="Iron" checked={filters.products.includes('iron')} onChange={handleCheckboxChange('products')} />
+                <FilterInput id="concrete" label="Concrete" checked={filters.products.includes('concrete')} onChange={handleCheckboxChange('products')} />
+                <FilterInput id="aggregate" label="Aggregate" checked={filters.products.includes('aggregate')} onChange={handleCheckboxChange('products')} />
+                <FilterInput id="steel" label="Steel" checked={filters.products.includes('steel')} onChange={handleCheckboxChange('products')} />
             </FilterSection>
 
             <FilterSection title="Line">

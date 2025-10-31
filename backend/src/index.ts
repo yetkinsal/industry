@@ -22,6 +22,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'https://industry-production-dd27.up.railway.app',
+  'https://industr.netlify.app',
   process.env.CORS_ORIGIN, // Additional origin from env if specified
 ].filter(Boolean); // Remove undefined/null values
 

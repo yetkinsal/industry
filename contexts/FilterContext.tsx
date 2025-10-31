@@ -6,7 +6,8 @@ export interface FilterState {
   lines: string[];
   sku: string;
   shifts: string[];
-  productName: string;
+  productName: string; // Legacy: single product (kept for backward compatibility)
+  products: string[]; // New: multiple products for comparison
 }
 
 const defaultFilters: FilterState = {
@@ -15,7 +16,8 @@ const defaultFilters: FilterState = {
   lines: ['line1', 'line2', 'line3', 'line4'],
   sku: '',
   shifts: ['shift1', 'shift2', 'shift3'],
-  productName: 'cement',
+  productName: 'cement', // Legacy default
+  products: ['cement'], // New: default to single product
 };
 
 interface FilterContextType {
