@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "cd backend && npm start",
-    "build:backend": "cd backend && npm install && npm run build"
+    "build:backend": "cd backend && npm install --include=dev && npm run build"
   },
   "dependencies": {
     "react": "^19.2.0",
