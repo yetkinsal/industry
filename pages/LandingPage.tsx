@@ -1,51 +1,22 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
+// Auth disabled - all users have access
+// import { useAuth } from '../contexts/AuthContext';
 
 const LandingPage = () => {
-  const { isAuthenticated, user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header with Auth */}
+      {/* Header */}
       <header className="p-4 flex justify-between items-center border-b border-border">
         <h2 className="text-xl font-bold text-text-primary">Industrial SQL Dashboard</h2>
         <div className="flex items-center space-x-4">
-          {isAuthenticated ? (
-            <>
-              <span className="text-sm text-text-secondary">
-                Welcome, {user?.name}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-blue-500 transition-colors"
-              >
-                Get Started
-              </Link>
-            </>
-          )}
+          <Link
+            to="/dashboards"
+            className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+          >
+            Dashboards
+          </Link>
         </div>
       </header>
 
@@ -59,45 +30,28 @@ const LandingPage = () => {
             Monitor your factory's pulse in real-time. A fully modular, easy-to-use dashboard that connects directly to your SQL databases.
           </p>
 
-          {isAuthenticated ? (
-            <div className="mt-8 space-y-4">
+          <div className="mt-8 space-y-4">
+            <Link
+              to="/dashboards"
+              className="inline-block bg-primary text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-blue-500 transition-transform transform hover:scale-105"
+            >
+              Go to My Dashboards
+            </Link>
+            <div className="flex justify-center space-x-4">
               <Link
-                to="/dashboards"
-                className="inline-block bg-primary text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-blue-500 transition-transform transform hover:scale-105"
+                to="/factory/new"
+                className="text-primary hover:underline text-sm font-medium"
               >
-                Go to My Dashboards
+                Create New Factory
               </Link>
-              <div className="flex justify-center space-x-4">
-                <Link
-                  to="/factory/new"
-                  className="text-primary hover:underline text-sm font-medium"
-                >
-                  Create New Factory
-                </Link>
-                <Link
-                  to="/admin/connections"
-                  className="text-primary hover:underline text-sm font-medium"
-                >
-                  Manage Connections
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-8">
               <Link
-                to="/register"
-                className="inline-block bg-primary text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-blue-500 transition-transform transform hover:scale-105"
+                to="/admin/connections"
+                className="text-primary hover:underline text-sm font-medium"
               >
-                Get Started Free
+                Manage Connections
               </Link>
-              <p className="mt-6 text-sm text-text-secondary">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary hover:underline font-medium">
-                  Sign in
-                </Link>
-              </p>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Features */}
