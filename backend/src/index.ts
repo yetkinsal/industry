@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { testAppDbConnection, closeAllConnections } from './config/database';
+import { runMigrations } from './migrate';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -98,6 +99,9 @@ async function startServer() {
       console.error('Failed to connect to database. Exiting...');
       process.exit(1);
     }
+
+    // Run database migrations
+    await runMigrations();
 
     app.listen(PORT, () => {
       console.log(`
