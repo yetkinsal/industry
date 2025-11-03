@@ -1,5 +1,9 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import dns from 'dns';
+
+// Force IPv4 resolution to avoid IPv6 connection issues
+dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
 
