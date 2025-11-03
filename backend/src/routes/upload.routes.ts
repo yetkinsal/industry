@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB max file size
+    fileSize: 1024 * 1024 * 1024, // 1GB max file size (increased for large databases)
   },
   fileFilter: (req, file, cb) => {
     const allowedExtensions = ['.sql', '.bak'];

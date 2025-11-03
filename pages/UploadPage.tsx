@@ -199,7 +199,10 @@ export default function UploadPage() {
                     Drag and drop your database file here
                   </p>
                   <p className="text-sm text-white/60">
-                    Supports .sql and .bak files (max 100MB)
+                    Supports .sql and .bak files (max 1GB)
+                  </p>
+                  <p className="text-xs text-yellow-400 mt-2">
+                    💡 For files larger than 1GB, use direct database restore (see docs)
                   </p>
                 </>
               )}
