@@ -87,16 +87,20 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create triggers for updated_at
+-- Create triggers for updated_at (drop first if exists to make idempotent)
+DROP TRIGGER IF EXISTS update_factories_updated_at ON factories;
 CREATE TRIGGER update_factories_updated_at BEFORE UPDATE ON factories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_connections_updated_at ON connections;
 CREATE TRIGGER update_connections_updated_at BEFORE UPDATE ON connections
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_dashboards_updated_at ON dashboards;
 CREATE TRIGGER update_dashboards_updated_at BEFORE UPDATE ON dashboards
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_widgets_updated_at ON widgets;
 CREATE TRIGGER update_widgets_updated_at BEFORE UPDATE ON widgets
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
