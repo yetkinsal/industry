@@ -10,6 +10,6 @@
     }
   ],
   "env": {
-    "VITE_API_BASE_URL": "https://industry-production-dd27.up.railway.app"
+    "VITE_API_BASE_URL": "https://industry-oyn3.onrender.com"
   }
 }

@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
-  'https://industry-production-dd27.up.railway.app',
+  'https://industry-oyn3.onrender.com',
   'https://industr.netlify.app',
   'https://frontend-seven-psi-66.vercel.app',
   process.env.CORS_ORIGIN, // Additional origin from env if specified
