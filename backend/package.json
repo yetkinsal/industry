@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp schema.sql dist/schema.sql",
     "start": "node dist/index.js",
     "db:init": "node -r dotenv/config scripts/initDb.js"
   },
