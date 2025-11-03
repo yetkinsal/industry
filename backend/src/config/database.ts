@@ -1,22 +1,18 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
-import dns from 'dns';
-
-// Force IPv4 resolution to avoid IPv6 connection issues
-dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
 
-// Application database pool (Supabase PostgreSQL)
-// Using DATABASE_URL for Supabase connection
+// Application database pool (PostgreSQL)
+// Using DATABASE_URL from environment (Render PostgreSQL or Supabase)
 export const appDbPool = new Pool({
   connectionString: process.env.DATABASE_URL,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
-  ssl: {
-    rejectUnauthorized: false, // Required for Supabase
-  },
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false, // Required for managed databases
+  } : false,
 });
 
 // Handle pool errors
