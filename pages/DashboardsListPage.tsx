@@ -119,12 +119,26 @@ const DashboardsListPage = () => {
                 Manage your industrial analytics dashboards
               </p>
             </div>
-            <button
-              onClick={() => setShowNewModal(true)}
-              className="px-4 py-2 bg-primary text-white font-semibold rounded-md hover:bg-blue-500 transition-colors"
-            >
-              + New Dashboard
-            </button>
+            <div className="flex gap-3">
+              <Link
+                to="/uploads"
+                className="px-4 py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors"
+              >
+                Upload Database
+              </Link>
+              <Link
+                to="/database-explorer"
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors"
+              >
+                Explore Database
+              </Link>
+              <button
+                onClick={() => setShowNewModal(true)}
+                className="px-4 py-2 bg-primary text-white font-semibold rounded-md hover:bg-blue-500 transition-colors"
+              >
+                + New Dashboard
+              </button>
+            </div>
           </div>
 
           {/* Factory Filter */}

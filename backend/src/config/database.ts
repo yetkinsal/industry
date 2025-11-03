@@ -137,3 +137,41 @@ export async function closeAllConnections(): Promise<void> {
   await appDbPool.end();
   console.log('All database connections closed');
 }
+
+/**
+ * Create a new connection pool (helper for one-off queries)
+ */
+export function createConnection(config: {
+  dbType: string;
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+}): Pool {
+  if (config.dbType !== 'postgres') {
+    throw new Error(`Database type ${config.dbType} not yet supported`);
+  }
+
+  return new Pool({
+    host: config.host,
+    port: config.port,
+    database: config.database,
+    user: config.username,
+    password: config.password,
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  });
+}
+
+/**
+ * Decrypt database credentials (helper)
+ */
+export function decryptCredentials(userEnc: string, passEnc: string): { username: string; password: string } {
+  const { decrypt } = require('../utils/encryption');
+  return {
+    username: decrypt(userEnc),
+    password: decrypt(passEnc),
+  };
+}

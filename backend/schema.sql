@@ -70,6 +70,20 @@ CREATE TABLE IF NOT EXISTS dataset_cache (
   UNIQUE(widget_id, param_hash)
 );
 
+-- Uploaded files table: Track uploaded database files and SQL scripts
+CREATE TABLE IF NOT EXISTS uploaded_files (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  factory_id UUID NOT NULL REFERENCES factories(id) ON DELETE CASCADE,
+  file_name VARCHAR(255) NOT NULL,
+  file_type VARCHAR(10) NOT NULL CHECK (file_type IN ('sql', 'bak')),
+  file_path TEXT NOT NULL,
+  file_size BIGINT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'uploaded' CHECK (status IN ('uploaded', 'processing', 'processed', 'failed')),
+  metadata JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_connections_factory_id ON connections(factory_id);
 CREATE INDEX IF NOT EXISTS idx_dashboards_factory_id ON dashboards(factory_id);
@@ -77,6 +91,8 @@ CREATE INDEX IF NOT EXISTS idx_widgets_dashboard_id ON widgets(dashboard_id);
 CREATE INDEX IF NOT EXISTS idx_widgets_connection_id ON widgets(connection_id);
 CREATE INDEX IF NOT EXISTS idx_dataset_cache_widget_id ON dataset_cache(widget_id);
 CREATE INDEX IF NOT EXISTS idx_dataset_cache_expires_at ON dataset_cache(expires_at);
+CREATE INDEX IF NOT EXISTS idx_uploaded_files_factory_id ON uploaded_files(factory_id);
+CREATE INDEX IF NOT EXISTS idx_uploaded_files_status ON uploaded_files(status);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -102,6 +118,10 @@ CREATE TRIGGER update_dashboards_updated_at BEFORE UPDATE ON dashboards
 
 DROP TRIGGER IF EXISTS update_widgets_updated_at ON widgets;
 CREATE TRIGGER update_widgets_updated_at BEFORE UPDATE ON widgets
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_uploaded_files_updated_at ON uploaded_files;
+CREATE TRIGGER update_uploaded_files_updated_at BEFORE UPDATE ON uploaded_files
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Seed data for development/testing

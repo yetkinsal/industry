@@ -13,6 +13,8 @@ import NewFactoryPage from './pages/NewFactoryPage';
 import ConnectionsPage from './pages/ConnectionsPage';
 import DashboardPage from './pages/DashboardPage';
 import DashboardsListPage from './pages/DashboardsListPage';
+import UploadPage from './pages/UploadPage';
+import DatabaseExplorerPage from './pages/DatabaseExplorerPage';
 
 function App() {
   return (
@@ -30,6 +32,9 @@ function App() {
           <Route path="/builder/:id" element={<BuilderPage />} />
           <Route path="/factory/new" element={<NewFactoryPage />} />
           <Route path="/admin/connections" element={<ConnectionsPage />} />
+          <Route path="/uploads" element={<UploadPage />} />
+          <Route path="/database-explorer" element={<DatabaseExplorerPage />} />
+          <Route path="/database-explorer/:connectionId" element={<DatabaseExplorerPage />} />
 
           {/* Catch all */}
           <Route path="*" element={<Navigate to="/" />} />

@@ -10,6 +10,9 @@ import factoriesRoutes from './routes/factories.routes';
 import connectionsRoutes from './routes/connections.routes';
 import dashboardsRoutes from './routes/dashboards.routes';
 import widgetsRoutes from './routes/widgets.routes';
+import uploadRoutes from './routes/upload.routes';
+import schemaInspectorRoutes from './routes/schema-inspector.routes';
+import sqlExecutorRoutes from './routes/sql-executor.routes';
 import { WidgetsController } from './controllers/widgets.controller';
 
 // Load environment variables
@@ -66,6 +69,9 @@ app.use('/api/factories', factoriesRoutes);
 app.use('/api/connections', connectionsRoutes);
 app.use('/api/dashboards', dashboardsRoutes);
 app.use('/api/widgets', widgetsRoutes);
+app.use('/api/uploads', uploadRoutes);
+app.use('/api/schema', schemaInspectorRoutes);
+app.use('/api/sql', sqlExecutorRoutes);
 
 // Dashboard widgets endpoint (nested route)
 const widgetsController = new WidgetsController();
