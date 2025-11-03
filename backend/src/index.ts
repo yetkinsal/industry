@@ -5,7 +5,7 @@ import { testAppDbConnection, closeAllConnections } from './config/database';
 import { runMigrations } from './migrate';
 
 // Import routes
-import authRoutes from './routes/auth.routes';
+// import authRoutes from './routes/auth.routes'; // Auth disabled for now
 import factoriesRoutes from './routes/factories.routes';
 import connectionsRoutes from './routes/connections.routes';
 import dashboardsRoutes from './routes/dashboards.routes';
@@ -61,7 +61,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes); // Auth routes (public + protected)
+// app.use('/api/auth', authRoutes); // Auth disabled for now
 app.use('/api/factories', factoriesRoutes);
 app.use('/api/connections', connectionsRoutes);
 app.use('/api/dashboards', dashboardsRoutes);
